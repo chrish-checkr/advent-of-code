@@ -29,3 +29,25 @@ races.each do |race|
 end
 
 puts races.map { |race| race[:win_count] }.inject(:*)
+
+# Part Two
+races = []
+
+File.open(INPUT_FILENAME).each do |row|
+  if row.start_with?("Time")
+    races << { time: row.gsub(/[^0-9]/, '').to_i }
+  elsif row.start_with?("Distance")
+    races[0][:distance] = row.gsub(/[^0-9]/, '').to_i
+  end
+end
+
+races.each do |race|
+  win_count = 0
+  (1..(race[:time]-1)).each do |hold_length|
+    win_count += 1 if hold_length * (race[:time] - hold_length) > race[:distance]
+  end
+
+  race[:win_count] = win_count
+end
+
+puts races.map { |race| race[:win_count] }.inject(:*)
